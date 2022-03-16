@@ -390,3 +390,10 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  쉽게 이야기해서 HTML 파일을 그대로 열어보면 주석 처리가 되지만, 타임리프를 
 	  랜더링 한 경우에만 보이는 기능이다.
 ```
+
+### 블록 
+```
+  <th:block>은 HTML 태그가 아닌 타임리프의 유일한 자체 태그다.
+    - 타임리프 특성상 HTML 태그안에 속성으로 기능을 정의해서 사용하는데, 위 예처럼 
+	  이렇게 사용하기 애매한 경우에 사용하면 된다. <th:block>은 렌더링시 제거된다.
+```
