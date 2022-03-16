@@ -258,3 +258,41 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	- hello: 상대 경로 
 	참고: https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#link-urls
 ```
+
+### 리터럴 
+```
+  Literals
+    - 리터럴은 소스 코드상에 고정된 값을 말하는 용어이다. 
+	  예를 들어서 다음 코드에서 "Hello"는 문자 리터럴, 10, 20은 숫자 리터럴이다. 
+	    String a = "Hello"
+		int a = 10 * 20
+	
+	참고 
+	  - 이 내용이 쉬워 보이지만 처음 타임리프를 사용하면 많이 실수하니 잘 보아두자. 
+	
+	- 타임리프는 다음과 같은 리터럴이 있다. 
+	  - 문자: 'hello'
+	  - 숫자: 10
+	  - 불린: true, false
+	  - null: null
+	
+	- 타임리프에서 문자 리터럴은 항상 '(작은 따옴표)로 감싸야 한다. 
+	  - <span th:text="'hello'">
+	  - 그런데 문자를 항상 '로 감싸는 것은 너무 귀찮은 일이다. 공백 없이 쭉 이어진다면 
+	    하나의 의미있는 토큰으로 인지해서 다음과 같이 작은 따옴표를 생략할 수 있다. 
+		- 룰: A-Z, a-z, 0-9, [], . , - , _
+		  - <span th:text="hello">
+	
+	오류 
+	  - <span th:text="hello world!"></span>
+	  - 문자 리터럴은 원칙상 '로 감싸야 한다. 중간에 공백이 있어서 하나의 의미있는 토큰으로도 
+	    인식되지 않는다. 
+	
+	수정 
+	  - <span th:text="'hello world!'"></span>
+	  - 이렇게 '로 감싸면 정상 동작한다.
+	
+	리터럴 대체(Literals substitutions)
+	  - <span th:text="|hello ${data}|">
+	    - 마지막의 리터럴 대체 문법을 사용하면 마치 템플릿을 사용하는 것 처럼 편리하다.
+```
