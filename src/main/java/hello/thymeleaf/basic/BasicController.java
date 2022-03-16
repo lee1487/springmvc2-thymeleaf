@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 import lombok.Data;
 
 @Controller
@@ -148,5 +149,15 @@ public class BasicController {
 	public String block(Model model) {
 		addUsers(model);
 		return "basic/block";
+	}
+	
+	@GetMapping("/javascript")
+	public String javascript(Model model) {
+		model.addAttribute("user", new User("userA", 10));
+		
+		addUsers(model);
+		
+		return "basic/javascript";
+		
 	}
 }
