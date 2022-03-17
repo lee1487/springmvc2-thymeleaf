@@ -760,3 +760,46 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	
 	editForm.html - 추가 
 ```
+
+### 라디오 버튼 
+```
+  라디오 버튼은 여러 선택지 중에 하나를 선택할 때 사용할 수 있다. 이번 시간에는 라디오 버튼을 
+  자바 ENUM을 활용해서 개발해보자. 
+    - 상품 종류 
+	  - 도서, 식품, 기타 
+	  - 라디오 버튼으로 하나만 선택할 수 있다. 
+	
+	FormItemController - 추가 
+	  - itemTypes를 등록 폼, 조회, 수정 폼에서 모두 사용하므로 @ModelAttribute의 
+	    특별한 사용법을 적용하자. 
+	  - ItemType.values()를 사용하면 해당 ENUM의 모든 정보를 배열로 반환한다.
+	    예) [BOOK, FOOD, ETC]
+	
+	상품 등록 폼에 기능을 추가해보자. 
+	addForm.html - 추가 
+	  - 체크 박스는 수정시 체크를 해제하면 아무 값도 넘어가지 않기 때문에, 별도의 히든 필드로 
+	    이런 문제를 해결했다. 라디오 버튼은 이미 선택이 되어 있다면, 수정시에도 항상 하나를 
+		선택하도록 되어 있으므로 체크 박스와 달리 별도의 히든 필드를 사용할 필요가 없다. 
+	
+	상품 상세와 수정에도 라디오 버튼을 넣어주자. 
+	item.html
+	  - 주의 
+	    - item.html에는 th:object를 사용하지 않았기 때문에 th:field 부분에 
+		  ${item.itemType}으로 적어주어야 한다. 
+		  disabled를 사용해서 상품 상세에서는 라디오 버튼이 선택되지 않도록 했다.
+		  
+	edit.html 
+	  - 타임리프로 생성된 HTML 
+	    - 선택한 식품(FOOD)에 checked="checked"가 적용된 것을 확인할 수 있다. 
+	
+	타임리프에서 ENUM 직접 사용하기 
+	  - 이렇게 모델에 ENUM을 담아서 전달하는 대신에 타임리프는 자바 객체에 
+	    직접 접근할 수 있다. 
+	  - 타임리프에서 ENUM  직접 접근 
+	    - <div th:each="type : ${T(hello.itemservice.domain.item.ItemType).values()}"
+		- ${T(hello.itemservice.domain.item.ItemType).values()} 스프링EL 문법으로 
+		  ENUM을 직접 사용할 수 있다. ENUM에 values()를 호출하면 해당 ENUM의 
+		  모든 정보가 배열로 반환된다. 
+		- 그런데 이렇게 사용하면 ENUM의 패키지 위치가 변경되거나 할 때 자바 컴파일러가 타임리프까지 
+		  컴파일 오류를 잡을 수 없으므로 추천하지는 않는다.
+```
