@@ -548,3 +548,46 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - 스프링 부트가 제공하는 타임리프 설정, thymeleaf 검색 필요
 	  - https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.templating
 ```
+
+### 입력 폼 처리 
+```
+  지금부터 타임리프가 제공하는 입력 폼 기능을 적용해서 기존 프로젝트의 폼 코드를 타임리프가 지원하는 
+  기능을 사용해서 효율적으로 개선해보자.
+    - th:object: 커맨드 객체를 지정한다. 
+	- *{...}: 선택 변수 식이라고 한다. th:object에서 선택한 객체에 접근한다. 
+	- th:field
+	  - HTML 태그의 id,name,value 속성을 자동으로 처리해준다. 
+	
+	- 렌더링 전
+	  - <input type="text" th:field="*{itemName}" />
+	- 렌더링 후 
+	  - <input type="text" id="itemName" name="itemName" th:value="*{itemName}" />
+
+  등록 폼 
+    - th:object를 적용하려면 먼저 해당 오브젝트 정보를 넘겨주어야 한다. 등록 폼이기 때문에 
+	  데이터가 비어있는 빈 오브젝트를 만들어서 뷰에 전달하자. 
+	
+	- form/addForm.html 변경 코드 부분
+	  - th:object="${item}" 
+	    - <form>에서 사용할 객체를 지정한다. 선택 변수 식 *{...}을 적용할 수 있다. 
+	  - th:field="*{itemName}"
+	    - *{itemName}는 선택 변수 식을 사용했는데, ${item.itemName}과 같다. 
+		  앞서 th:object로 item을 선택했기 때문에 선택 변수 식을 적용할 수 있다. 
+		- th:field는 id, name, value 속성을 모두 자동으로 만들어준다.
+		  - id: th:field에서 지정한 변수 이름과 같다. id="itemName"
+		  - name: th:field에서 지정한 변수 이름과 같다. name="itemName"
+		  - value: th:field에서 지정한 변수의 값을 사용한다. value=""
+		참고로 해당 예제에서 id 속성을 제거해도 th:field가 자동으로 만들어준다.
+
+  수정 폼 
+    - 수정 폼은 앞서 설명한 내용과 같다. 수정 폼의 경우 id, name, value를 모두 
+	  신경써야 했는데, 많은 부분이 th:field 덕분에 자동으로 처리되는 것을 
+	  확인할 수 있다. 
+
+  정리 
+    - th:object, th:field 덕분에 폼을 개발할 때 약간의 편리함을 얻었다. 
+	  쉽고 단순해서 크게 어려움이 없었을 것이다. 
+	  사실 이것의 진짜 위력은 뒤에 설명할 검증(Validation)에서 나타난다. 
+	  이후 검증 부분에서 폼 처리와 관련된 부분을 더 깊이있게 알아보자. 
+```
+
