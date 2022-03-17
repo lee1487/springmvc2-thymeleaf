@@ -669,3 +669,38 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 		타입을 찍어보면 결과가 null이 아니라 false인 것을 확인할 수 있다. 
 		log.info("item.open={}", item.getOpen());
 ```
+
+### 체크박스 - 단일2 
+```
+  타임리프 
+    - 개발할 때 마다 이렇게 히든 필드를 추가하는 것은 상당히 번거롭다. 타임리프가 제공하는 
+	  폼 기능을 사용하면 이런 부분을 자동으로 처리할 수 있다. 
+	
+  타임리프 - 체크 박스 코드 추가 
+    - 체크 박스의 기존 코드를 제거하고 타임리프가 제공하는 체크 박스 코드로 변경하자. 
+
+  타임리프 체크 박스 HTML 생성 결과 
+    - <input type="hidden" name="_open" value="on" /> 
+	  - 타임리프를 사용하면 체크 박스의 히든 필드와 관련된 부분도 함께 해결해준다. 
+	    HTML 생성 결과를 보면 히든 필드 부분이 자동으로 생성되어 있다. 
+
+  상품 상세에 적용하자. 
+    - item.html 
+	  주의 
+	    - item.html에는 th:object를 사용하지 않았기 때문에 th:field 부분에 
+		  ${item.open}으로 적어주어야 한다. 
+		- disabled를 사용해서 상품 상세에는 체크 박스가 선택되지 않도록 했다. 
+	  
+	  - HTML 생성 결과 
+	    - 타임리프의 체크 확인 (checked="checked")
+		  - 체크 박스에서 판매 여부를 선택해서 저장하면, 조회시에 checked 속성이 
+		    추가된 것을 확인할 수 있다. 이런 부분을 개발자가 직접 처리하려면 상당히 
+			번거롭다. 타임리프의 th:field를 사용하면, 값이 true인 경우 
+			체크를 자동으로 처리해준다. 
+
+  상품 수정에도 적용하자. 
+    - editForm.html
+	  - 상품 수정도 th:object, th:field를 모두 적용해야 한다. 
+	  - 실행해보면 체크 박스를 수정해도 반영되지 않는다. 실제 반영되도록 코드를 수정하자. 
+	    - ItemRepository - update() 코드 수정 
+```
