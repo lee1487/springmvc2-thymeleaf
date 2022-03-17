@@ -45,6 +45,15 @@
  			<label th:for="${#ids.prev('itemType')}" th:text="${type.description}" class="form-check-label">BOOK</label>
  		</div>
 	</div>
+	<!-- SELECT -->
+	<div>
+		<div>배송 방식</div>
+		<select th:field="${item.deliveryCode}" class="form-select" disabled="disabled">
+			<option value="">==배송 방식 선택==</option>
+	 		<option th:each="deliveryCode : ${deliveryCodes}" th:value="${deliveryCode.code}" th:text="${deliveryCode.displayName}">FAST</option>
+	 	</select>
+	</div>
+	<hr class="my-4">
     <div>
         <label for="itemId">상품 ID</label>
         <input type="text" id="itemId" name="itemId" class="form-control" value="1" th:value="${item.id}" readonly>
