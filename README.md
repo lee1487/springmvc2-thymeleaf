@@ -498,3 +498,15 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	- 이 방식은 사실 앞서 배운 코드 조각을 조금 더 적극적으로 사용하는 방식이다. 쉽게 이야기해서 
 	  레이아웃 개념을 두고, 그 레이아웃에 필요한 코드 조각을 전달해서 완성하는 것으로 이해하면 된다. 
 ```
+
+### 템플릿 레이아웃2
+```
+  템플릿 레이아웃 확장 
+    - 앞서 이야기한 개념을 <head> 정도에만 적용하는게 아니라 <html> 전체에 적용할 수도 있다. 
+	- layoutFile.html을 보면 기본 레이아웃을 가지고 있는데, <html>에 th:fragment 
+	  속성이 정의되어 있다. 이 레이아웃 파일을 기본으로 하고 여기에 필요한 내용을 전달해서 
+	  부분부분 변경하는 것으로 이해하면 된다. 
+	- layoutExtendMain.html은 현재 페이지인데, <html> 자체를 th:replace를 
+	  사용해서 변경하는 것을 확인할 수 있다. 결국 layoutFile.html에 필요한 내용을 
+	  전달하면서 <html> 자체를 layoutFile.html로 변경한다. 
+```
