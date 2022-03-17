@@ -940,6 +940,26 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - messages_en.properties: 영어 국제화 사용
 	  
 	  주의! 파일명은 message가 아니라 messages다! 마지막 s에 주의하자.  
-	    
-	  
+```
+
+### 스프링 메시지 소스 사용 
+```
+  MessageSource 인터페이스 
+    - MessageSource 인터페이스를 보면 코드를 포함한 일부 파라미터로 메시지를 
+	  읽어오는 기능을 제공한다. 
+	- 스프링이 제공하는 메시지 소스를 어떻게 사용하는지 테스트 코드를 통해서 학습해보자.
+
+  test/java/hello/itemservice/message.MessageSourceTest.java
+    - ms.getMessage("hello", null, null)
+	  - code: hello
+	  - args: null
+	  - locale: null
+	- 가장 단순한 테스트는 메시지 코드로 hello를 입력하고 나머지 값은 null을 입력했다. 
+	  locale 정보가 없으면 basename에서 설정한 기본 이름 메시지 파일을 조회한다. 
+	  basename으로 messages를 지정 했으므로 messages.properties
+	  파일에서 데이터를 조회한다. 
+
+  MessageSourceTest 추가 - 메시지가 없는 경우, 기본 메시지
+    - 메시지가 없는 경우에는 NoSuchMessageException이 발생한다. 
+	- 메시지가 없어도 기본 메시지(defaultMessage)를 사용하면 기본 메시지가 반환된다. 
 ```
