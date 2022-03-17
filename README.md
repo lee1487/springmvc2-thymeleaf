@@ -849,7 +849,7 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - addForm.html, editForm.html, item.html, items.html
 	- 왜냐하면 해당 HTML 파일에 메시지가 하드코딩 되어 있기 때문이다. 
 	- 이런 다양한 메시지를 한 곳에서 관리하도록 하는 기능을 메시지 기능이라 한다. 
-	  예를 들어서 message.properties라는 메시지 관리용 파일을 만들고 
+	  예를 들어서 messages.properties라는 메시지 관리용 파일을 만들고 
 	    item=상품
 		item.id=상품 ID
 		item.itemName=상품명
@@ -864,27 +864,82 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 
   국제화 
     - 메시지에서 한 발 더 나가보자. 
-	  메시지에서 설명한 메시지 파일(message.properties)을 각 나라별로 별도로 관리하면
+	  메시지에서 설명한 메시지 파일(messages.properties)을 각 나라별로 별도로 관리하면
 	  서비스를 국제화 할 수 있다. 
 	  예를 들어서 다음과 같이 2개의 파일을 만들어서 분류한다. 
-	  - message_en.properties 
+	  - messages_en.properties 
 	    item=Item
 		item.id=Item ID
 		item.itemName=Item Name
 		item.price=price
 		item.quantity=quantity
-	  - message_ko.properties
+	  - messages_ko.properties
 	    item=상품
 		item.id=상품 ID
 		item.itemName=상품명
 		item.price=가격
 		item.quantity=수량
-	- 영어를 사용하는 사람이면 message_en.properties를 사용하고, 한국어를 사용하는
-	  사람이면 message_ko.properties를 사용하게 개발하면 된다. 
+	- 영어를 사용하는 사람이면 messages_en.properties를 사용하고, 한국어를 사용하는
+	  사람이면 messages_ko.properties를 사용하게 개발하면 된다. 
 	  이렇게 하면 사이트를 국제화 할 수 있다. 
 	- 한국에서 접근한 것인지 영어에서 접근한 것인지 인식하는 방법은 HTTP accept-language
 	  헤더 값을 사용하거나 사용자가 직접 언어를 선택하도록 하고, 쿠키 등을 사용해서 처리하면 된다. 
 	- 메시지와 국제화 기능을 직접 구현할 수도 있겠지만, 스프링은 기본적인 메시지와 국제화 기능을 
 	  모두 제공한다. 그리고 타임리프도 스프링이 제공하는 메시지와 국제화 기능을 편리하게 
 	  통합해서 제공한다. 지금부터 스프링이 제공하는 메시지와 국제화 기능을 알아보자.
+```
+
+### 스프링 메시지 소스 설정 
+```
+  스프링은 기본적인 메시지 관리 기능을 제공한다. 
+  
+  메시지 관리 기능을 사용하려면 스프링이 제공하는 MessageSource를 스프링 빈으로 등록하면 되는데, 
+  MessageSource는 인터페이스이다. 따라서 구현체인 ResourceBundleMessageSource를 
+  스프링 빈으로 등록하면 된다. 
+  
+  직접 등록 
+    @Bean
+	public MessageSource messageSource() {
+	 ResourceBundleMessageSource messageSource = new
+	ResourceBundleMessageSource();
+	 messageSource.setBasenames("messages", "errors");
+	 messageSource.setDefaultEncoding("utf-8");
+	 return messageSource;
+	}
+	
+    - basenames: 설정 파일의 이름을 지정한다. 
+	  - messages로 지정하면 messages.properties 파일을 읽어서 사용한다. 
+	  - 추가로 국제화 기능을 적용하려면 messages_en.properties, 
+	    messages_ko.properties와 같이 파일명 마지막에 언어 정보를 주면된다. 
+		만약 찾을 수 있는 국제화 파일이 없으면 messages.properties
+		(언어정보가 없는 파일명)를 기본으로 사용한다.
+	  - 파일의 위치는 /resources/messages.properties에 두면 된다. 
+	  - 여러 파일을 한번에 지정할 수 있다. 여기서는 messages, errors
+	    둘을 지정했다. 
+	- defaultEncoding
+	  - 인코딩 정보를 지정한다. utf-8을 사용하면 된다.
+
+  스프링 부트 
+    - 스프링 부트를 사용하면 스프링 부트가 MessageSource를 자동으로 스프링 빈으로 등록한다. 
+
+  스프링 부트 메시지 소스 설정 
+    - 스프링 부트를 사용하면 다음과 같이 메시지 소스를 설정할 수 있다. 
+	  - application.properties
+	    spring.messages.basename=messages,config.i18n.messages 
+
+  스프링 부트 메시지 소스 기본 값 
+    - spring.messages.basename=messages
+	
+  MessageSource를 스프링 빈으로 등록하지 않고, 스프링 부트와 관련된 별도의 설정을 
+  하지 않으면 messages라는 이름으로 기본 등록된다. 따라서 messages_en.properties,
+  messages_ko.properties, messages.properties 파일만 등록하면 자동으로 인식된다.
+  
+  메시지 파일 만들기 
+    - 메시지 파일을 만들어보자. 국제화 테스트를 위해서 messages_en 파일도 추가하자. 
+	  - messages.properties: 기본 값으로 사용(한글) 
+	  - messages_en.properties: 영어 국제화 사용
+	  
+	  주의! 파일명은 message가 아니라 messages다! 마지막 s에 주의하자.  
+	    
+	  
 ```
