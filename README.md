@@ -962,4 +962,23 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
   MessageSourceTest 추가 - 메시지가 없는 경우, 기본 메시지
     - 메시지가 없는 경우에는 NoSuchMessageException이 발생한다. 
 	- 메시지가 없어도 기본 메시지(defaultMessage)를 사용하면 기본 메시지가 반환된다. 
+
+  MessageSourceTest 추가 - 매개변수 사용
+    - 다음 메시지의 {0} 부분은 매개변수를 전달해서 치환할 수 있다. 
+	- hello.name=안녕 {0} -> Spring 단어를 매개변수로 전달 -> 안녕 Spring
+	
+	- 국제화 파일 선택 
+	  - locale 정보를 기반으로 국제화 파일을 선택한다. 
+	  - Locale이 en_US의 경우 messages_en_US -> messages_en -> messages 순서로 찾는다. 
+	  - Locale에 맞추어 구체적인 것이 있으면 구체적인 것을 찾고, 
+	    없으면 디폴트를 찾는다고 이해하면 된다. 
+
+  MessageSourceTest 추가 - 국제화 파일 선택1
+    - ms.getMessage("hello", null, null): locale 정보가 없으므로 messages를 사용
+	- ms.getMessage("hello", null, Locale.KOREA): locale 정보가 있지만, 
+	  messages_ko가 없으므로 messages를 사용 
+
+  MessageSourceTest 추가 - 국제화 파일 선택2
+    - ms.getMessage("hello", null, Locale.ENGLISH): locale 정보가 
+	  Locale.ENGLISH이므로 messages_en을 찾아서 사용
 ```
