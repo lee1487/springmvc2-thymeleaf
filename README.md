@@ -982,3 +982,61 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
     - ms.getMessage("hello", null, Locale.ENGLISH): locale 정보가 
 	  Locale.ENGLISH이므로 messages_en을 찾아서 사용
 ```
+
+### 웹 애플리케이션에 메시지 적용하기 
+```
+  실제 웹 애플리케이션에 메시지를 적용해보자. 
+  
+  먼저 메시지를 추가 등록하자. 
+  messages.properties 
+    label.item=상품
+	label.item.id=상품 ID
+	label.item.itemName=상품명
+	label.item.price=가격
+	label.item.quantity=수량
+	
+	page.items=상품 목록
+	page.item=상품 상세
+	page.addItem=상품 등록
+	page.updateItem=상품 수정
+	
+	button.save=저장
+	button.cancel=취소
+
+  타임리프 메시지 적용 
+    타임리프의 메시지 표현식 #{...}을 사용하면 스프링의 메시지를 편리하게 
+	조회할 수 있다. 예를 들어서 방금 등록한 상품이라는 이름을 조회하려면 #{label.item}이라고 
+	하면 된다. 
+	
+	타임리프 템플릿 파일에 메시지를 적용해보자.
+	addForm.html
+	editForm.html
+	item.html
+	items.html
+	
+	페이지 이름에 적용 
+	  - <h2>상품 등록 폼</h2>
+	    - <h2 th:text="#{page.addItem}">상품 등록</h2>
+	
+	레이블에 적용 
+	  - <label for="itemName">상품명</label>
+	    - <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
+		- <label for="price" th:text="#{label.item.price}">가격</label>
+		- <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+	
+	버튼에 적용 
+	  - <button type="submit">상품 등록</button>
+	    - <button type="submit" th:text="#{button.save}">저장</button>
+		- <button type="button" th:text="#{button.cancel}"></button>
+	
+	실행 
+	  - 잘 동작하는지 확인하기 위해 messages.properties 파일의 내용을 가격 -> 금액과 
+	    같이 변경해서 확인해보자. 정상 동작하면 다시 돌려두자. 
+	참고로 파라미터는 다음과 같이 사용할 수 있다. 
+	  - hello.name=안녕 {0}
+	  - <p th:text="#{hello.name(${item.itemName})}"></p>
+	
+	정리 
+	  - 지금까지 메시지를 효율적으로 관리하는 방법을 알아보았다. 이제 여기에 더해서 국제화를 
+	    웹 애플리케이션에 어떻게 적용하는지 알아보자. 
+```
