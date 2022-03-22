@@ -1197,3 +1197,44 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 ```
   앞서 만든 기능을 유지하기 위해, 컨트롤러와 템플릿 파일을 복사하자. 
 ```
+
+### BindingResult1 
+```
+  지금부터 스프링이 제공하는 검증 오류 처리 방법을 알아보자. 여기서 핵심은 
+  BindingResult이다. 우선 코드를 확인해보자.
+  
+  ValidationItemControllerV2 - addItemV1
+    - 코드 변경 
+	  - 메서드 이름 변경: addItem() -> addItemV1()
+	  - @Slf4j: 로그 출력을 위해 추가 
+	  
+	  주의 
+	    - BindingResult bindingResult 파라미터의 위치는 
+		  @ModelAttribute Item item 다음에 와야 한다. 
+	
+	- 필드 오류 - FieldError
+	- FieldError 생성자 요약 
+	  - 필드에 오류가 있으면 FieldError 객체를 생성해서 
+	    bindingResult에 담아 두면 된다. 
+		- objectName: @ModelAttribute 이름 
+		- field: 오류가 발생한 필드 이름 
+		- defaultMessage: 오류 기본 메시지 
+	
+	- 글로벌 오류 - ObjectError 
+	- ObjectError 생성자 요약
+	  - 특정 필드를 넘어서는 오류가 있으면 ObjectError 객체를 생성해서 
+	    bindingResult에 담아 두면 된다.
+		- objectName: @ModelAttribute 이름 
+		- defaultMessage: 오류 기본 메시지
+
+  validation/v2/addForm.html 수정
+    - 타임리프 스프링 검즘 오류 통합 기능 
+	  - 타임리프는 스프링의 BindingResult를 활용해서 편리하게 검증 오류를 
+	    표현하는 기능을 제공한다. 
+		- #fields: #fields로 BindingResult가 제공하는 검증 오류에
+		  접근할 수 있다. 
+		- th:errors: 해당 필드에 오류가 있는 경우에 태그를 출력한다. 
+		  th:if의 편의 버전이다. 
+		- th:errorclass: th:field에서 지정한 필드에 오류가 있으면 
+		  class 정보를 추가한다.
+```
