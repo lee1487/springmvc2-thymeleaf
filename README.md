@@ -1192,3 +1192,8 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	
 	지금부터 스프링이 제공하는 검증 방법을 하나씩 알아보자.
 ```
+
+### 프로젝트 준비 v2
+```
+  앞서 만든 기능을 유지하기 위해, 컨트롤러와 템플릿 파일을 복사하자. 
+```
