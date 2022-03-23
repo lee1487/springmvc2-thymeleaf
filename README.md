@@ -1331,3 +1331,54 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  컨트롤러를 호출한다. 따라서 타입 오류 같은 바인딩 실패시에도 사용자의 
 	  오류 메시지를 정상 출력할 수 있다. 
 ```
+
+### 오류 코드와 메시지 처리1 
+```
+  목표 
+    - 오류 메시지를 체계적으로 다루어보자. 
+  
+  FieldError 생성자 
+    - FieldError는 두 가지 생성자를 제공한다. 
+	- 파라미터 목록 
+	  - objectName: 오류가 발생한 객체 이름 
+	  - field: 오류 필드 
+	  - rejectedValue: 사용자가 입력한 값(거절된 값)
+	  - bindingFailure: 타입 오류 같은 바인딩 실패인지, 검증 실패인지 구분 값 
+	  - codes: 메시지 코드 
+	  - arguments: 메시지에서 사용하는 인자 
+	  - defaultMessage: 기본 오류 메시지 
+	- FieldError, ObjectError의 생성자는 errorCode, arguments를 
+	  제공한다. 이것은 오류 발생시 오류 코드로 메시지를 찾기 위해 사용된다. 
+
+  errors 메시지 파일 생성 
+    - messages.properties를 사용해도 되지만, 오류 메세지를 구분하기 쉽게 
+	  errors.properties라는 별도의 파일로 관리해보자. 
+	- 먼저 스프링 부트가 해당 메시지 파일을 인식할 수 있게 다음 설정을 추가한다. 
+	  이렇게하면 messages.properties, errors.properties 두 파일 
+	  모두 인식한다.(생략하면 messages.properties를 기본으로 인식한다.)
+
+  스프링 부트 메시지 설정 추가 
+    - application.properties
+	  - spring.messages.basename=messages,errors
+	
+  errors.properties 추가 
+    - src/main/resources/errors.properties
+	  required.item.itemName=상품 이름은 필수입니다.
+	  range.item.price=가격은 {0} ~ {1} 까지 허용합니다. 
+	  max.item.quantity=수량은 최대 {0} 까지 허용합니다.
+	  totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+
+    참고 
+      - errors_en.properties 파일을 생성하면 오류 메시지도 국제화 처리를 할 수 있다. 
+
+  이제 errors에 등록한 메시지를 사용하도록 코드를 변경해보자. 
+    ValidationItemControllerV2 - addItemV3() 추가
+	  - addItemV2()의 @PostMapping 부분 주석 처리 
+	  - codes: required.item.itemName을 사용해서 메시지 코드를 지정한다. 
+	  - arguments: Object[]{1000, 1000000}를 사용해서 코드의 {0}, {1}로 
+	    치환할 값을 전달한다. 
+	
+	실행 
+	  - 실행해보면 메시지, 국제화에서 학습한 MessageSource를 찾아서 메세지를 
+	    조회하는 것을 확인할 수 있다. 
+```
