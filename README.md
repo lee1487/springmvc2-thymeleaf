@@ -1617,3 +1617,31 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
     - 메시지 코드 생성 전략은 그냥 만들어진 것이 아니다. 조금 뒤에서 Bean Validation을 
 	  학습하면 그 진가를 더 확인할 수 있다.
 ```
+
+### Validator 분리1
+```
+  목표 
+    - 복잡한 검증 로직을 별도로 분리하자. 
+
+  컨트롤러에서 검증 로직이 차지하는 부분은 매우 크다. 이런 경우 별도의 클래스로 역할을
+  분리하는 것이 좋다. 그리고 이렇게 분리한 검증 로직을 재사용 할 수도 있다. 
+  
+  ItemValidator를 만들자.
+    - 스프링은 검증을 체계적으로 제공하기 위해 다음 인터 페이스를 제공한다.
+	  - public interface Validator {
+		  boolean supports(Class<?> clazz);
+		  void validate(Object target, Errors errors);
+		}
+	    - supports() {}: 해당 검증기를 지원하는 여부 확인(뒤에서 설명)
+		- validate(Object target, Errors errors)
+		  - 검증 대상 객체와 BindingResult
+
+  ItemValidator 직접 호출하기
+  ValidationItemControllerV2 - addItemV5()
+    - addItemV4의 @PostMapping 부분 주석 처리 
+	- ItemValidator를 스프링 빈으로 주입 받아서 직접 호출했다. 
+	
+	실행 
+	  - 실행해보면 기존과 완전히 동일하게 동작하는 것을 확인할 수 있다. 
+	    검증과 관련된 부분이 깔끔하게 분리되었다.
+```
