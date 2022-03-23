@@ -1519,3 +1519,61 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 		  생성된 오류 메시지 코드를 순서대로 돌아가면서 메시지를 찾는다. 그리고 없으면 디폴트 
 		  메시지를 출력한다. 
 ```
+
+### 오류 코드와 메시지 처리5
+```
+  오류 코드 관리 전략 
+  
+  핵심은 구체적인 것에서! 덜 구체적인 것으로! 
+    - MessageCodesResolver는 required.item.itemName처럼 구체적인 것을
+	  먼저 만들어주고, required처럼 덜 구체적인 것을 가장 나중에 만든다. 
+	  이렇게 하면 앞서 말한 것 처럼 메시지와 관련된 공통 전략을 편리하게 도입할 수 있다. 
+
+  왜 이렇게 복잡하게 사용하는가?
+    - 모든 오류 코드에 대해서 메시지를 각각 다 정의하면 개발자 입장에서 관리하기 
+	  너무 힘들다. 크게 중요하지 않은 메시지는 범용성 있는 required 같은 메시지로 
+	  끝내고, 정말 중요한 메시지는 꼭 필요할 때 구체적으로 사용하는 방식이 더 효과적이다. 
+
+  이제 우리 애플리케이션에 이런 오류 코드 전략을 도입해보자.
+  
+  errors.properties 
+    - 크게 객체 오류와 필드 오류를 나누었다. 그리고 범용성에 따라 레벨을 나누어두었다. 
+	  - itemName의 경우 required 검증 오류 메시지가 발생하면 다음 코드 순서대로
+	    메시지가 생성된다. 
+		1. required.item.itemName
+		2. required.itemName
+		3. required.java.lang.String
+		4. required
+	
+	- 그리고 이렇게 생성된 메시지 코드를 기반으로 순서대로 MessageSource 
+	  메시지에서 찾는다. 
+	- 구체적인 것에서 덜 구체적인 순서대로 찾는다. 메시지에 1번이 없으면 2번을 찾고, 
+	  2번이 없으면 3번을 찾는다. 
+	- 이렇게 되면 만약에 크게 중요하지 않은 오류 메시지는 기존에 정의된 것을 그냥 
+	  재활용 하면 된다!
+	
+	실행 
+	  - Level1 전부 주석해보자.
+	  - Level2,3 전부 주석해보자
+	  - Level4 전부 주석해보자 -> 못찾으면 코드에 작성한 디폴트 메시지를 사용한다. 
+	  - Object 오류도 Level1, Level2로 재활용 가능하다.
+
+  ValidationUtils
+    - ValidationUtils 사용 전 
+	  - if (!StringUtils.hasText(item.getItemName())) {
+		 bindingResult.rejectValue("itemName", "required", "기본: 상품 이름은
+		필수입니다.");
+		}
+	- ValidationUtils 사용 후
+	  - 다음과 같이 한줄로 가능, 제공하는 기능은 Empty, 공백 같은 단순한 기능만 제공 
+	  - ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, 
+		"itemName","required");
+
+  정리 
+    - 1. rejectValue() 호출 
+	  2. MessageCodesResolver를 사용해서 검증 오류 코드로 메시지 코드들을 생성 
+	  3. new FieldError()를 생성하면서 메시지 코드들을 보관 
+	  4. th:errors에서 메시지 코드들로 메시지를 순서대로 메시지에서 찾고, 노출 
+	
+	
+```
