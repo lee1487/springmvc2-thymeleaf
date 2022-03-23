@@ -1382,3 +1382,43 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - 실행해보면 메시지, 국제화에서 학습한 MessageSource를 찾아서 메세지를 
 	    조회하는 것을 확인할 수 있다. 
 ```
+
+### 오류 코드와 메시지 처리2
+```
+  목표 
+    - FieldError, ObjectError는 다루기 너무 번거롭다. 
+	- 오류 코드도 좀 더 자동화 할 수 있지 않을까? 예) item.itemName 처럼?
+
+  컨트롤러에서 BindingResult는 검증해야 할 객체인 target 바로 다음에 온다. 
+  따라서 BindingResult는 이미 본인이 검증해야 할 객체인 target을 알고 있다. 
+  
+  rejectedValue(), reject() 
+    - BindingResult가 제공하는 rejectedValue(), reject()를 사용하면 
+	  FieldError, ObjectError를 직접 생성하지 않고, 깔끔하게 검증 오류를 
+	  다룰 수 있다.
+	- rejectValue(), reject()를 사용해서 기존 코드를 단순화해보자. 
+
+  ValidationItemControllerV2 - addItemV4() 추가
+    - addItemV3()의 @PostMapping 부분 주석 처리 
+	- 실행 
+	  - 오류 메시지가 정상 출력된다. 그런데 errors.properties에 있는 코드를 
+	    직접 입력하지 않았는데 어떻게 된 것일까? 
+	
+	rejectValue() 
+	  - field: 오류 필드명 
+	  - errorCode: 오류 코드(이 오류 코드는 메시지에 등록된 코드가 아니다. 뒤에서 
+	    설명할 messagaeResolver를 위한 오류 코드이다.)
+	  - errorArgs: 오류 메시지에서 {0}을 치환하기 위한 값 
+	  - defaultMessage: 오류 메시지를 찾을 수 없을 때 사용하는 기본 메시지 
+	  
+	- 앞에서 BindingResult는 어떤 객체를 대상으로 검증하는지 target을 이미 
+	  알고 있다고 했다. 따라서 target(item)에 대한 정보는 없어도 된다. 
+	  오류 필드명은 동일하게 price를 사용했다. 
+	
+	축약된 오류 코드 
+	  - FieldError()를 직접 다룰 때는 오류 코드를 range.item.price와 같이 
+	    모두 입력했다. 그런데 rejectValue()를 사용하고 부터는 오류 코드를 
+		range로 간단하게 입력했다. 그래도 오류 메시지를 잘 찾아서 출력한다. 
+		무언가 규칙이 있는 것 처럼 보인다. 이 부분을 이해하려면 MessageCodesResolver를 
+		이해해야 한다. 왜 이런식으로 오류 코드를 구성하는지 바로 다음에 자세히 알아보자. 
+```
