@@ -1645,3 +1645,70 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - 실행해보면 기존과 완전히 동일하게 동작하는 것을 확인할 수 있다. 
 	    검증과 관련된 부분이 깔끔하게 분리되었다.
 ```
+
+### Validator 분리2
+```
+  스프링이 Validator 인터페이스를 별도로 제공하는 이유는 체계적으로 검증 기능을 도입하기 위해서다. 
+  그런데 앞에서는 검증기를 직접 불러서 사용했고, 이렇게 사용해도 된다. 그런데 Validator 인터페이스를
+  사용해서 검증기를 만들면 스프링의 추가적인 도움을 받을 수 잇다. 
+  
+  WebDataBinder를 통해서 사용하기 
+    - WebDataBinder는 스프링의ㅡ 파라미터 바인딩의 역할을 해주고 검증 기능도 내부에 포함한다.
+
+  ValidationItemControllerV2에 다음 코드를 추가하자
+    - @InitBinder
+	  public void init(WebDataBinder dataBinder) {
+		 log.info("init binder {}", dataBinder);
+		 dataBinder.addValidators(itemValidator);
+	  }
+	  - 이렇게 WebDataBinder에 검증기를 추가하면 해당 컨트롤러에서는 검증기를 
+	    자동으로 적용할 수 있다. @InitBinder -> 해당 컨트롤러에만 영향을 준다. 
+		글로벌 설정은 별도로 해야한다.(마지막에 설명)
+
+  @Validated 적용
+  ValidationItemControllerV2 - addItemV6()
+    - addItemV5()의 @PostMapping 부분 주석 처리 
+	- validator를 직접 호출하는 부분이 사라지고, 대신에 검증 대상 앞에 
+	  @Validated가 붙었다. 
+	  
+	- 실행 
+	  - 기존과 동일하게 잘 동작하는 것을 확인할 수 있다. 
+	  
+	- 동작 방식 
+	  - @Validated는 검증기를 실행하라는 애노테이션이다.
+	  - 이 애노테이션이 붙으면 앞서 WebDataBinder에 등록한 검증기를 찾아서 실행한다.
+	    그런데 여러 검증기를 등록한다면 그 중에 어떤 검증기가 실행되어야 할지 구분이 
+		필요하다. 이때 supports()가 사용된다. 
+	  - 여기서는 supports(Item.class)호출되고, 결과가 true이므로 
+	    ItemValidator의 validate()가 호출된다.
+
+  글로벌 설정 - 모든 컨트롤러에 다 적용 
+    @SpringBootApplication
+	public class ItemServiceApplication implements WebMvcConfigurer {
+	
+	 public static void main(String[] args) {
+		SpringApplication.run(ItemServiceApplication.class, args);
+	 }
+	 
+	 @Override
+	 public Validator getValidator() {
+		return new ItemValidator();
+	 }
+	 
+	}
+    - 이렇게 글로벌 설정을 추가할 수 있다. 기존 컨트롤러의 @InitBinder를 제거해도 
+	  글로벌 설정으로 정상 동작하는 것을 확인할 수 있다. 이어지는 다음 강의를 위해서는 
+	  글로벌 설정은 꼭 제거해두자. 
+	
+	주의 
+	  - 글로벌 설정을 하면 다음에 설명할 Bean Validator가 자동 등록되지 않는다.
+	    글로벌 설정 부분은 주석처리해두자. 참고로 글로벌 설정을 직접 사용하는 경우는 
+		드물다.
+	참고 
+	  - 검증시 @Validated, @Valid 둘 다 사용가능하다. 
+	  - javax.validation.@Valid를 사용하려면 build.gradle 의존관계
+	    추가가 필요하다. 
+	  - implementation 'org.springframework.boot:spring-boot-starter-validation'
+	  - @Validated는 스프링 전용 검증 애노테이션이고, @Valid는 자바 표준 검증 
+	    애노테이션이다. 자세한 내용은 다음 Bean Validation에서 설명하겠다.
+```
