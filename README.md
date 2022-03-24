@@ -2244,3 +2244,21 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
   HomeController - home() 수정 
   templates/home.html 추가 
 ```
+
+### 회원 가입 
+```
+  Member 
+  MemberRepository
+  MemberController
+  
+  회원가입 뷰 템플릿 
+    - templates/members/addMemberForm.html
+
+  실행하고 로그로 결과를 확인하자 
+  
+  회원용 테스트 데이터 추가 
+    - 편의상 테스트용 회원 데이터를 추가하자.
+	  - loginId: test
+	  - password: test!
+	  - name: 테스터 
+``` 
