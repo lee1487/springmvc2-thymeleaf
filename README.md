@@ -2262,3 +2262,31 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  - password: test!
 	  - name: 테스터 
 ``` 
+
+### 로그인 기능 
+```
+  로그인 기능을 개발해보자. 지금은 로그인 ID, 비밀번호를 입력하는 부분에 집중하자 
+  
+  LoginService 
+    - 로그인의 핵심 비즈니스 로직은 회원을 조회한 다음에 파라미터로 넘어온 
+	  password와 비교해서 같으면 회원을 반환하고, 만약 password가 다르면 
+	  null을 반환한다. 
+
+  LoginForm
+  LoginController
+    - 로그인 컨트롤러는 로그인 서비스를 호출해서 로그인에 성공하면 홈 화면으로 이동하고, 
+	  로그인에 실패하면 bindingResult.reject()를 사용해서 글로벌 오류(ObjectError)를
+	  생성한다. 그리고 정보를 다시 입력하도록 로그인 폼을 뷰 템플릿으로 사용한다. 
+
+  로그인 폼 뷰 템플릿 
+  templates/login/loginForm.html
+    - 로그인 폼 뷰 템플릿에는 특별한 코드는 없다. loginId, passwd가 틀리면 글로벌 
+	  오류가 나타난다. 
+
+  실행 
+    - 실행해보면 로그인이 성공하면 홈으로 이동하고, 로그인에 실패하면 "아이디 비밀번호가 
+	  맞지 않습니다."라는 경고와 함께 로그인 폼이 나타난다. 
+	- 그런데 아직 로그인이 되면 홈 화면에 고객 이름이 보여야 한다는 요구사항을 만족하지 
+	  못한다. 로그인의 상태를 유지하면서, 로그인에 성공한 사용자는 홈 화면에 접근시 
+	  고객의 이름을 보여주려면 어떻게 해야할까?
+```
