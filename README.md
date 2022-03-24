@@ -2237,3 +2237,10 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 		삭제해도 domain에는 전혀 영향이 없도록 의존관계를 설계하는 것이 
 		중요하다. 반대로 이야기하면 domain은 web을 참조하면 안된다. 
 ```
+
+### 홈 화면 
+```
+  홈 화면을 개발하자 
+  HomeController - home() 수정 
+  templates/home.html 추가 
+```
