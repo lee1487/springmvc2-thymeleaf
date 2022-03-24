@@ -1932,3 +1932,18 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  작성하는 것을 권장한다. 
 	- @ScriptAssert 부분 제거
 ```
+
+### Bean Validation - 수정에 적용 
+```
+  상품 수정에도 빈 검증(Bean Validation)을 적용해보자. 
+  
+  수정에도 검증 기능을 추가하자 
+  ValidationItemControllerV3 - edit() 변경 
+    - edit(): Item 모델 객체에 @Validated를 추가하자 
+	- 검증 오류가 발생하면 editForm으로 이동하는 코드 추가 
+
+  validation/v3/editForm.html 변경
+    - .field-error css 추가 
+	- 글로벌 오류 메시지 
+	- 상품명, 가격, 수량 필드에 검증 기능 추가 
+``` 
