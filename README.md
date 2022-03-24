@@ -1758,7 +1758,7 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
   의존 관계 추가 
     - Bean Validation을 사용하려면 다음 의존관계를 추가해야 한다. 
 	- build.gradle
-	  - implementation 'org.springframework.boot::spring-boot-starter-validation'
+	  - implementation 'org.springframework.boot:spring-boot-starter-validation'
 	- spring-boot-starter-validation 의존관계를 추가하면 라이브러리가 추가 된다. 
 
   Jakarta Bean Validation
@@ -1803,4 +1803,9 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
     - 이렇게 빈 검증기(Bean Validation)를 직접 사용하는 방법을 알아보았다. 아마 지금까지 배웠던 
 	  스프링 MVC 검증 방법에 빈 검증기를 어떻게 적용하면 좋을지 여러가지 생각이 들 것이다. 
 	  스프링은 이미 개발자를 위해 빈 검증기를 스프링에 완전히 통합해두었다. 
+``` 
+
+### Bean Validation - 프로젝트 준비 V3
+```
+  앞서 만든 기능을 유지하기 위해, 컨트롤러와 템플릿 파일을 복사하자.
 ``` 
