@@ -1809,3 +1809,62 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 ```
   앞서 만든 기능을 유지하기 위해, 컨트롤러와 템플릿 파일을 복사하자.
 ``` 
+
+### Bean Validation - 스프링 적용 
+```
+  ValidationItemControllerV3 코드 수정 
+    - 제거: addItemV1() ~ addItemV5()
+	- 변경: addItemV6() -> addItem()
+	
+	코드 제거 
+	  - 기존에 등록함 ItemValidator를 제거해두자! 오류 검증기가 중복 적용된다. 
+	
+	참고 
+	  - 특정 필드의 범위를 넘어서는 검증(가격*수량의 합은 10,000원 이상) 기능이 빠졌는데,
+	    이 부분은 조금 뒤에 설명한다. 
+
+  스프링 MVC는 어떻게 Bean Validator를 사용? 
+    - 스프링 부트가 spring-boot-starter-validation 라이브러리를 넣으면 자동으로 
+	  Bean Validator를 인지하고 스프링에 통합한다. 
+
+  스프링 부트는 자동으로 글로벌 Validator로 등록한다. 
+    - LocalValidatorFactoryBean을 글로벌 Validator로 등록한다. 
+	  이 Validator는 @NotNull같은 애노테이션을 보고 검증을 수행한다. 이렇게 글로벌 
+	  Validator가 적용되어 있기 때문에, @Valid, @Validated만 적용하면 된다. 
+	  검증 오류가 발생하면, FieldError, ObjectError를 생성해서 
+	  BindingResult에 담아준다. 
+	
+	- 주의 
+	  - 글로벌 Validator를 직접 등록하면 스프링 부트는 Bean Validator를 
+	    글로벌 Validator로 등록하지 않는다. 따라서 애노테이션 기반의 빈 검증기가 
+		동작하지 않는다. 
+	
+	- 참고 
+	  - 검증시 @Validated, @Valid 둘다 사용가능하다. 
+	  - javax.validation.@Valid를 사용하려면 build.gradle 의존관계 추가가 
+	    필요하다.(이전에 추가했다.)
+	  - implementation 'org.springframework.boot:spring-boot-starter-validation'
+	    @Validated는 스프링 전용 검증 애노테이션이고, @Valid는 자바 표준 검증 
+		애노테이션이다. 둘중 아무거나 사용해도 동일하게 작동하지만, @Validated는 
+		내부에 groups라는 기능을 포함하고 있다. 이 부분은 조금 뒤에 다시 설명하겠다.
+		
+  검증 순서 
+    1. @ModelAttribute 각각의 필드에 타입 변환 시도 
+	  1-1). 성공하면 다음으로 
+	  1-2). 실패하면 typeMismatch로 FieldError 추가 
+	2. Validator 적용 
+
+  바인딩에 성공한 필드만 Bean Validation 적용 
+    - BeanValidator는 바인딩에 실패한 필드는 BeanValidation을 적용하지 않는다. 
+	  생각해보면 타입 변환에 성공해서 바인딩에 성공한 필드여야 BeanValidation 
+	  적용이 의미 있다. (일단 모델 객체에 바인딩 받는 값이 정상으로 들어와야 
+	  검증도 의미가 있다.)
+	
+	- @ModelAttribute -> 각각의 필드 타입 변환 시도 -> 변환에 성공한 필드만 
+	  BeanValidation 적용 
+	
+	- 예) 
+	  - itemName에 문자 "A"입력 -> 타입 변환 성공 -> itemName 필드에 BeanValidation 적용 
+	  - price에 문자 "A" 입력 -> "A"를 숫자 타입 변환 시도 실패 
+	    -> typeMismatch FieldError추가 -> price 필드는 BeanValidation 적용 X
+```
