@@ -2125,3 +2125,73 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
     - Form 전송 객체 분리해서 등록과 수정에 딱 맞는 기능을 구성하고, 
 	  검증도 명확히 분리했다. 
 ```
+
+### Bean Validation - HTTP 메시지 컨버터
+```
+  @Valid, @Validated는 HttpMessageConverter(@RequestBody)에도 
+  적용할 수 있다. 
+  
+  참고 
+    - @ModelAttribute는 HTTP 요청 파라미터(URL 쿼리 스트링, POST Form)를 
+	  다룰 때 사용한다. 
+	- @RequestBody는 HTTP Body의 데이터를 객체로 변환할 때 사용한다. 
+	  주로 API JSON 요청을 다룰 때 사용한다. 
+
+  ValidationItemApiController 생성
+    - Postman을 사용해서 테스트 해보자. 
+	
+	- 성공 요청 
+	  - Postman에서 Body -> raw -> JSON을 선택해야 한다. 
+	
+	- API의 경우 3가지 경우를 나누어 생각해야 한다. 
+	  - 성공 요청: 성공 
+	  - 실패 요청: JSON을 객체로 생성하는 것 자체가 실패함 
+	  - 검증 오류 요청: JSON을 객체로 생성하는 것은 성공했고, 검증에서 실패함 
+	
+	- 성공 요청 로그 
+	  - API 컨트롤러 호출 
+	    성공 로직 실행 
+	
+	- 실패 요청 
+	  - POST http://localhost:8080/validation/api/items/add
+	    {"itemName": "hello", "price":"A", "quantity":10}
+	
+	  - price의 값에 숫자가 아닌 문자를 전달해서 실패하게 만들어보자 
+	    - HttpMessageConverter에서 요청 JSON을 Item 객체로 
+	      생성하는데 실패한다. 이 경우는 Item 객체를 만들지 못하기 때문에 
+		  컨트롤러 자체가 호출되지 않고 그 전에 예외가 발생한다. 
+		  물론 Validation도 실행되지 않는다. 
+	- 검증 오류 요청 
+	  - POST http://localhost:8080/validation/api/items/add
+		{"itemName":"hello", "price":1000, "quantity": 10000}
+	  - 수량(quantity)이 10000이면 BeanValidation @Max(9999)에서 걸린다. 
+	    - return bindingResult.getAllErrors();는 ObjectError와 
+		  FieldError를 반환한다. 스프링이 이 객체를 JSON으로 변환해서 
+		  클라이언트에 전달했다. 여기서는 예시로 보여주기 위해서 검증 오류 객체들을 
+		  그대로 반환했다. 실제 개발할 때는 이 객체들을 그대로 사용하지 말고, 
+		  필요한 데이터만 뽑아서 별도의 API 스펙을 정의하고 그에 맞는 객체를 
+		  만들어서 반환해야 한다. 
+
+  @ModelAttribute vs @RequestBody
+    - HTTP 요청 파라미터를 처리하는 @ModelAttribute는 각각의 필드 단위로 
+	  세밀하게 적용된다. 그래서 특정 필드에 타입이 맞지 않는 오류가 발생해도 
+	  나머지 필드는 정상 처리할 수 있었다. 
+	  HttpMessageConverter는 @ModelAttribute와 다르게 각각의 
+	  필드 단위로 적용되는 것이 아니라, 전체 객체 단위로 적용된다. 
+	  따라서 메시지 컨버터의 작동이 성공해서 Item 객체를 만들어야 @Valid, 
+	  @Validated가 적용된다. 
+	
+	  - @ModelAttribute는 필드 단위로 정교하게 바인딩이 적용된다.
+	    특정 필드가 바인딩 되지 않아도 나머지 필드는 정상 바인딩 되고, 
+		Validator를 사용한 검증도 적용할 수 있다. 
+	  - @RequestBody는 HttpMessageConverter 단계에서 
+	    JSON 데이터를 객체로 변경하지 못하면 이후 단계 자체가 
+		진행되지 않고 예외가 발생한다. 컨트롤러도 호출되지 않고, 
+		Validator도 적용할 수 없다. 
+	
+	참고 
+	  - HttpMessageConverter 단계에서 실패하면 예외가 발생한다. 
+	    예외 발생시 원하는 모양으로 예외를 처리하는 방법은 예외 처리 부분에서 
+		다룬다. 
+	
+```
