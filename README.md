@@ -2432,3 +2432,30 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	    세션의 만료시간을 짧게(예:30분) 유지한다. 또는 해킹이 의심되는 경우 서버에서 
 		해당 세션을 강제로 제거하면 된다. 
 ```
+
+### 로그인 처리하기 - 세션 직접 만들기 
+```
+  세션을 직접 개발해서 적용해보자. 
+  세션 관리는 크게 다음 3가지 기능을 제공하면 된다. 
+    - 세션 생성 
+	  - sessionId 생성(임의의 추정 불가능한 랜덤 값)
+	  - 세션 저장소에 sessionId와 보관할 값 저장 
+	  - sessionId로 응답 쿠키를 생성해서 클라이언트에 전달 
+	- 세션 조회 
+	  - 클라이언트가 요청한 sessionId 쿠키의 값으로, 세션 저장소에 보관한 값 조회 
+	- 세션 만료 
+	  - 클라이언트가 요청한 sessionId 쿠키의 값으로, 세션 저장소에 보관한 
+	    sessionId와 값 제거 
+
+  SessionManager - 세션 관리
+    - 로직은 어렵지 않아서 쉽게 이해가 될 것이다. 
+	  - @Component: 스프링 빈으로 자동 등록한다. 
+	  - ConcurentHashMap: HashMap은 동시 요청에 안전하지 않다. 
+	    동시 요청에 안전한 ConcurentHashMap를 사용했다. 
+
+  SessionManagerTest - 테스트
+    - 간단하게 테스트를 진행해보자. 여기서는 HttpServletRequest,
+	  HttpServletResponse 객체를 직접 사용할 수 없기 때문에 테스트에서 
+	  비슷한 역할을 해주는 가짜 MockHttpServletRequest,
+	  MockHttpServletResponse를 사용했다. 
+``` 
