@@ -2981,3 +2981,43 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  서블릿 필터와 비교해서 스프링 인터셉터가 개발자 입장에서 훨씬 편리하다는 것을 코드로 
 	  이해했을 것이다. 특별한 문제가 없다면 인터셉터를 사용하는 것이 좋다. 
 ```
+
+### ArgumentResolver 활용 
+```
+  MVC1편 6. 스프링 MVC - 기본 기능 -> 요청 매핑 핸들러 어댑터 구조에서 
+  ArgumentResolver를 학습했다. 이번 시간에는 해당 기능을 사용해서 
+  로그인 회원을 조금 편리하게 찾아보자. 
+  
+  HomeController - 추가
+    - homeLoginV3Spring()의 @GetMapping 주석 처리 
+	- 다음에 설명하는 @Login 애노테이션을 만들어야 컴파일 오류가 사라진다. 
+	
+	- @Login 애노테이션이 있으면 직접 만든 ArgumentResolver가 동작해서 
+	  자동으로 세션에 있는 로그인 회원을 찾아주고, 만약 세션에 없다면 null을 
+	  반환하도록 개발해보자. 
+
+  @Login 애노테이션 생성
+    - @Target(ElementType.PARAMETER):파라미터에만 사용 
+	- @Retention(RetentionPolicy.RUNTIME):리플렉션 등을 활용할 수 있도록 
+	  런타임까지 애노테이션 정보가 남아있음 
+
+  MVC1에서 학습한 HandlerMethodArgumentResolver를 구현해보자 
+  LoginMemberArgumentResolver 생성 
+    - supportsParameter()
+	  - @Login 애노테이션이 있으면서 Member 타입이면 해당 ArgumentResolver가 
+	    사용된다. 
+	- resolveArgument()
+	  - 컨트롤러 호출 직전에 호출 되어서 필요한 파라미터 정보를 생성해준다. 여기서는 
+	    세션에 있는 로그인 회원 정보인 member 객체를 찾아서 반환해준다. 이후 
+		스프링MVC는 컨트롤러의 메서드를 호출하면서 여기에서 반환된 member 객체를 
+		파라미터에 전달해준다.
+
+  WebMvcConfigurer에 설정 추가
+    - 앞서 개발한 LoginMemberArgumentResolver를 등록하자.ㅏ 
+	
+	실행 
+	  - 실행해보면, 결과는 동일하지만, 더 편리하게 로그인 회원 정보를 조회할 수 있다. 
+	    이렇게 ArgumentResolver를 활용하면 공통 작업이 필요할 때 컨트롤러를 
+		더욱 편리하게 사용할 수 있다. 
+	  
+```
