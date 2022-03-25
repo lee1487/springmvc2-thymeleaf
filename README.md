@@ -3050,7 +3050,7 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	
 	- 먼저 스프링 부트가 제공하는 기본 예외 페이지가 있는데 이건 꺼두자(뒤에서 다시 설명하겠다.)
 	  - application.properties
-	    - server.error.whitelabel.enable=false
+	    - server.error.whitelabel.enabled=false
 	
 	ServletExController - 서블릿 예외 컨트롤러
 	  - 실행해보면 다음처럼 tomcat이 기본으로 제공하는 오류 화면을 볼 수 있다. 
@@ -3087,5 +3087,43 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
   정리 
     - 서블릿 컨테이너가 제공하는 기본 예외 처리 화면은 사용자가 보기에 불편하다. 
 	  의미 있는 오류 화면을 제공해보자. 
-  
 ```
+
+### 서블릿 예외 처리 - 오류 화면 제공 
+```
+  서블릿 컨테이너가 제공하는 기본 예외 처리 화면은 고객 친화적이지 않다. 
+  서블릿이 제공하는 오류 화면 기능을 사용해보자. 
+  
+  서블릿은 Exception(예외)가 발생해서 서블릿 밖으로 전달되거나 또는 
+  response.sendError()가 호출되었을 때 각각의 상황에 맞춘 오류 처리 
+  기능을 제공한다. 이 기능을 사용하면 친절한 오류 처리 화면을 준비해서 고객에게 
+  보여줄 수 있다. 
+  
+  과거에는 web.xml이라는 파일에 오류 화면을 등록했다. 
+  
+  지금은 스프링 부트를 통해서 서블릿 컨테이너를 실행하기 때문에, 스프링 부트가 
+  제공하는 기능을 사용해서 서블릿 오류 페이지를 등록하면 된다. 
+  
+  서블릿 오류페이지 등록 
+    - response.sendError(404): errorPage404 호출
+    - response.sendError(500): errorPage500 호출	
+	- RuntimeException 또는 그 자식 타입의 예외: errorPageEx 호출 
+
+  500 예외가 서버 내부에서 발생한 오류라는 뜻을 포함하고 있기 때문에 여기서는 
+  예외가 발생한 경우도 500 오류 화면으로 처리했다. 
+  
+  오류 페이지는 예외를 다룰 때 해당 예외와 그 자식 타입의 오류를 함께 처리한다. 
+  예를 들어서 위의 경우 RuntimeException은 물론이고 RuntimeException의 
+  자식도 함께 처리한다. 
+  
+  오류가 발생했을때 처리할 수 있는 컨트롤러가 필요하다. 예를 들어서 RuntimeException예외가 
+  발생하면 errorPageEx에서 지정한 /error-page/500이 호출된다.
+  
+  해당 오류를 처리할 컨트롤러가 필요하다. 
+  
+  오류 처리 View
+    - /templates/error-page/404.html
+	- /templates/error-page/500.html
+
+  설정한 오류 페이지가 정상 노출되는 것을 확인할 수 있다.  
+``` 
