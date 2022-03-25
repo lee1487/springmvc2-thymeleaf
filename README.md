@@ -2459,3 +2459,36 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  비슷한 역할을 해주는 가짜 MockHttpServletRequest,
 	  MockHttpServletResponse를 사용했다. 
 ``` 
+
+### 로그인 처리하기 - 직접 만든 세션 적용 
+```
+  지금까지 개발한 세션 관리 기능을 실제 웹 애플리케이션에 적용해보자. 
+  
+  LoginController - loginV2()
+    - 기존 login()의 @PostMapping("/login")주석 처리 
+	- private final SessionManager sessionManager; 주입 
+	- sessionManager.createSession(loginMember, response);
+	  로그인 성공시 세션을 등록한다. 세션에 loginMember를 저장해두고, 
+	  쿠키도 함께 발행한다.
+
+  LoginController - logoutV2()
+    - 기존 logout()의 @PostMapping("/logout") 주석 처리 
+	  로그 아웃시 해당 세션의 정보를 제거한다. 
+
+  HomeController - homeLoginV2()
+    - private final SessionManager sessionManager; 주입 
+	- 기존 homeLogin()의 @GetMapping("/") 주석 처리 
+	
+	- 세션 관리자에서 저장된 회원 정보를 조회한다. 만약 회원 정보가 없으면, 
+	  쿠키나 세션이 없는 것 이므로 로그인 되지 않은 것으로 처리한다. 
+
+  정리 
+    - 이번 시간에는 세션과 쿠키의 개념을 명확하게 이해하기 위해서 직접 만들어보았다. 
+	  사실 세션이라는 것이 뭔가 특별한 것이 아니라 단지 쿠키를 사용하는데, 서버에서 
+	  데이터를 유지하는 방법일 뿐이라는 것을 이해했을 것이다. 
+	- 그런데 프로젝트마다 이러한 세션 개념을 직접 개발하는 것은 상당히 불편할 것이다. 
+	  그래서 서블릿도 세션 개념을 지원한다. 
+	- 이제 직접 만드는 세션 말고, 서블릿이 공식 지원하는 세션을 알아보자. 서블릿이 
+	  공식 지원하는 세션은 우리가 직접 만든 세션과 동작 방식이 거의 같다. 추가로 
+	  세션을 일정시간 사용하지 않으면 해당 세션을 삭제하는 기능을 제공한다. 
+``` 
