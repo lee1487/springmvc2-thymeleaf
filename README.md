@@ -2492,3 +2492,63 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	  공식 지원하는 세션은 우리가 직접 만든 세션과 동작 방식이 거의 같다. 추가로 
 	  세션을 일정시간 사용하지 않으면 해당 세션을 삭제하는 기능을 제공한다. 
 ``` 
+
+### 로그인 처리하기 - 서블릿 HTTP 세션1 
+```
+  세션이라는 개념은 대부분의 웹 애플리케이션에 필요한 것이다. 어쩌면 웹이 등장하면서 부터 
+  나온 문제이다. 서블릿은 세션을 위해 HttpSession이라는 기능을 제공하는데, 지금까지 
+  나온 문제들을 해결해준다. 우리가 직접 구현한 세션의 개념이 이미 구현되어 있고, 더 잘 
+  구현되어 있다. 
+  
+  HttpSession 소개 
+    - 서블릿이 제공하는 HttpSession도 결국 우리가 직접 만든 SessionManager와 
+	  같은 방식으로 동작한다. 서블릿을 통해 HttpSession을 생성하면 다음과 같은 
+	  쿠키를 생성한다. 쿠키 이름이 JESSIONID이고, 값은 추정 불가능한 랜덤 값이다. 
+	  - Cookie: JSESSIONID=5B78E23B513F50164D6FDD8C97B0AD05
+
+  HttpSession 사용 
+    - 서블릿이 제공하는 HttpSession을 사용하도록 개발해보자. 
+
+  SessionConst
+    - HttpSession에 데이터를 보관하고 조회할 때, 같은 이름이 중복 되어 사용되므로, 
+	  상수를 하나 정의했다. 
+
+  LoginController - loginV3()
+    - 기존 loginV2()의 @PostMapping("/login") 주석 처리 
+	
+	- 세션 생성과 조회 
+	  - 세션을 생성하려면 request.getSession(true)를 사용하면 된다. 
+	    public HttpSession getSession(boolean create);
+	
+	  - 세션의 create 옵션에 대해 알아보자. 
+	    - request.getSession(true)
+		  - 세션이 있으면 기존 세션을 반환한다. 
+		  - 세션이 없으면 새로운 세션을 생성해서 반환한다. 
+		- request.getSession(false)
+		  - 세션이 있으면 기존 세션을 반환한다. 
+		  - 세션이 없으면 새로운 세션을 생성하지 않는다. null을 반환한다. 
+		- request.getSession()
+		  - 신규 세션을 생성하는 request.getSession(true)와 동일하다. 
+		  
+	- 세션에 로그인 회원 정보 보관 
+	  - session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+	  - 세션에 데이터를 보관하는 방법은 request.setAttribute(...)와 비슷하다. 
+	    하나의 세션에 여러 값을 저장할 수 있다. 
+
+  LoginController - logoutV3()
+    - 기존 logoutV2()의 @PostMapping("/logout") 주석 처리 
+	- session.invalidate(): 세션을 제거한다. 
+
+  HomeController - homeLoginV3()
+    - 기존 homeLoginV2()의 @GetMapping("/") 주석 처리 
+	- request.getSession(false)
+	  - request.getSession()을 사용하면 기본 값이 create: true 이므로, 
+	    로그인 하지 않을 사용자도 의미없는 세션이 만들어진다. 따라서 세션을 찾아서 
+		사용하는 시점에는 create: false 옵션을 사용해서 세션을 생성하지 
+		않아야 한다. 
+	- session.getAttribute(SessionConst.LOGIN_MEMBER)
+	  - 로그인 시점에 세션에 보관한 회원 객체를 찾는다. 
+
+  실행 
+    - JSESSIONID 쿠키가 적절하게 생성되는 것을 확인하자.
+```
