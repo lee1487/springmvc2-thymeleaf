@@ -2956,8 +2956,28 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	value "spring" to the filename variable
 	
 	링크: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/
-	springframework/web/util/pattern/PathPattern.html
+	springframework/web/util/pattern/PathPattern.html    
+```
 
-	
-	    
+### 스프링 인터셉터 - 인증 체크 
+```
+  서블릿 필터에서 사용했던 인증 체크 기능을 스프링 인터셉터로 개발해보자. 
+  
+  LoginCheckInterceptor 
+    - 서블릿 필터와 비교해서 코드가 매우 간결하다. 인증이라는 것은 컨트롤러 호출 전에만 
+	  호출되면 된다. 따라서 preHandle만 구현하면 된다. 
+
+  WebConfig - 순서 주의, 세밀한 설정 가능 
+    - 인터셉터와 필터가 중복되지 않도록 필터를 등록하기 위한 logFilter(), loginCheckFilter()의 
+	  @Bean은 주석처리하자. 
+	- 인터셉터를 적용하거나 하지 않을 부분은 addPathPatterns와 excludePathPatterns에 
+	  작성하면 된다. 기본적으로 모든 경로에 해당 인터셉터를 적용하되 (/**), 홈(/), 
+	  회원가입(/members/add), 로그인(/login), 리소스 조회(/css/**),오류(/error)와 
+	  같은 부분은 로그인 체크 인터셉터를 적용하지 않는다. 서블릿 필터와 비교해보면 매우 편리한 것을 
+	  알 수 있다. 
+
+  정리 
+    - 서블릿 필터와 스프링 인터셉터는 웹과 관련된 공통 관심사를 해결하기 위한 기술이다. 
+	  서블릿 필터와 비교해서 스프링 인터셉터가 개발자 입장에서 훨씬 편리하다는 것을 코드로 
+	  이해했을 것이다. 특별한 문제가 없다면 인터셉터를 사용하는 것이 좋다. 
 ```
