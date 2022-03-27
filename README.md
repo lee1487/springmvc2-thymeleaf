@@ -3807,3 +3807,33 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 			return new ModelAndView("error");
 		  }
 ```
+
+### API 예외 처리 - @ControllerAdvice 
+```
+  @ExceptionHandler를 사용해서 예외를 깔끔하게 처리할 수 있게 되었지만, 정상 코드와 
+  예외 처리 코드가 하나의 컨트롤러에 섞여 있다. @ControllerAdvice 또는 
+  @RestControllerAdvice를 사용하면 둘을 분리할 수 있다. 
+  
+  ExControllerAdvice
+  
+  ApiExceptionV2Controller 코드에 있는 @ExceptionHandler 모두 제거
+  
+  @ControllerAdvice 
+    - @ControllerAdvice는 대상으로 지정한 여러 컨트롤러에 @ExceptionHandler, 
+	  @InitBinder 기능을 부여해주는 역할을 한다. 
+	- @ControllerAdvice에 대상을 지정하지 않으면 모든 컨트롤러에 적용된다.(글로벌 적용)
+	- @RestControllerAdvice는 @ControllerAdvice와 같고, 
+	  @ResponseBody가 추가되어 있다. @Controller, @RestController의 
+	  차이와 같다. 
+
+  대상 컨트롤러 지정 방법 
+    - 스프링 공식 문서 참고 
+	- 스프링 공식 문서 예제에서 보는 것 처럼 특정 애노테이션이 있는 컨트롤러를 지정할 수 있고, 
+	  특정 패키지를 직접 지정할 수도 있다. 패키지 지정의 경우 해당 패키지와 그 하위에 있는 
+	  컨트롤러가 대상이된다. 그리고 특정 클래스를 지정할 수도 있다. 
+	  대상 컨트롤러 지정을 생략하면 모든 컨트롤러에 적용된다. 
+
+  정리 
+    - @ExceptionHandler와 @ControllerAdvice를 조합하면 예외를 깔끔하게 
+	  해결할 수 있다. 
+```
