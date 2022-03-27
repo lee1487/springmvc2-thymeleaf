@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import hello.exception.web.exception.UserException;
+import hello.exception.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
