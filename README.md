@@ -3558,3 +3558,35 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	    ExceptionResolver가 제거되므로 주의, extendHandlerExceptionResolvers를 
 		사용하자. 
 ```
+
+### API 예외 처리 - HandlerExceptionResolver 활용 
+```
+  예외를 여기서 마무리하기 
+    - 예외가 발생하면 WAS까지 예외가 던져지고, WAS에서 오류 페이지 정보를 찾아서 다시 /error를 
+	  호출하는 과정은 생각해보면 너무 복잡하다. ExceptionResolver를 활용하면 예외가 발생했을 때 
+	  이런 복잡한 과정 없이 여기에서 문제를 깔끔하게 해결할 수 있다. 
+
+  예제로 알아보자. 먼저 사용자 정의 예외를 하나 추가하자 
+  
+  UserException
+  ApiExceptionController - 예외 추가 
+    - http://localhost:8080/api/members/user-ex 호출시 UserException이 
+	  발생하도록 해두었다. 
+
+  이제 이 예외를 처리하는 UserHandlerExceptionResolver를 만들어보자 
+  UserHandlerExceptionResolver
+    - HTTP 요청 헤더의 ACCEPT 값이 application/json이면 JSON으로 오류를 내려주고, 
+	  그 외 경우에는 error/500에 있는 HTML 오류 페이지를 보여준다. 
+	  
+  WebConfig에 UserHandlerExceptionResolver 추가 
+  
+  정리 
+    - ExceptionResolver를 사용하면 컨트롤러에서 예외가 발생해도 ExceptionResolver에서 
+	  예외를 처리해버린다. 따라서 예외가 발생해도 서블릿 컨테이너까지 예외가 전달되지 않고, 
+	  스프링 MVC에서 예외 처리는 끝이난다. 결과적으로 WAS 입장에서는 정상 처리가 된 것이다. 
+	  이렇게 예외를 이곳에서 모두 처리할 수 있다는 것이 핵심이다. 
+	- 서블릿 컨테이너까지 예외가 올라가면 복잡하고 지저분하게 추가 프로세스가 실행된다. 반면에 
+	  ExceptionHandler를 사용하면 예외처리가 상당히 깔끔해진다. 
+	- 그런데 ExceptionHandler를 구현하려고 하니 상당히 복잡하다. 지금부터 스프링이 제공하는 
+	  ExceptionHandler들을 알아보자. 
+```
