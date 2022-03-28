@@ -4166,3 +4166,23 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 	- 추가로 스프링 부트는 DefaultConversionServicef를 상속받은 
 	  WebConversionService를 내부에서 사용한다. 
 ```
+
+### 포맷터 적용하기 
+```
+  포맷터를 웹 어플리케이션에 적용해보자. 
+  
+  WebConfig - 수정 
+    - StringToIntegerConverter, IntegerToStringConverter를 꼭 
+	  주석처리 하자. 
+	- MyNumberFormatter도 숫자 -> 문자, 문자 -> 숫자로 변경하기 때문에 
+	  둘의 기능이 겹친다. 우선순위는 컨버터가 우선하므로 포맷터가 적용되지 않고, 
+	  컨버터가 적용된다. 
+
+  실행 - 객체 -> 문자 
+    - 컨버전 서비스를 적용한 결과 MyNumberFormatter가 적용되어서 10,000문자가 
+	  출력된 것을 확인할 수 있다. 
+
+  실행 - 문자 -> 객체 
+    - "10,000"이라는 포맷팅 된 문자가 Integer 타입의 숫자 10000으로 
+	  정상 변환 된 것을 확인할 수 있다. 
+```
