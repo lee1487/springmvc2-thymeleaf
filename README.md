@@ -4042,5 +4042,51 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 		사용해서 타입을 변환한다. 부모 클래스와 다양한 외부 클래스를 호출하는 등 복잡한 내부 
 		과정을 거치기 때문에 대략 이렇게 처리되는 것으로 이해해도 충분하다. 만약 더 깊이있게 
 		확인하고 싶으면 IpPortConverter에 디버그 브레이크 포인트를 걸어서 확인해보자. 
+```
 
+### 뷰 템플릿에 컨버터 적용하기 
+```
+  이번에는 뷰 템플릿에 컨버터를 적용하는 방법을 알아보자. 
+  타임리프는 렌더링 시에 컨버터를 적용해서 렌더링 하는 방법을 편리하게 지원한다.
+  이전까지는 문자를 객체로 변환했다면, 이번에는 그 반대로 객체를 문자로 변환하는 
+  작업을 확인할 수 있다. 
+  
+  ConverterController
+    - Model에 숫자 10000dhk ipPort 객체를 담아서 뷰 템플릿에 전달한다. 
+
+  resources/templates/converter-view.html
+    - 타임리프는 ${{...}}를 사용하면 자동으로 컨버전 서비스를 사용해서 변환된 결괴를 
+	  출력해준다. 물론 스프링과 통합 되어서 스프링이 제공하는 컨버전 서비스를 사용하므로, 
+	  우리가 등록한 컨버터들을 사용할 수 있다. 
+	- 변수 표현식: ${...}
+	- 컨버전 서비스 적용: ${{...}}
+	
+	실행결과 
+	  - ${{number}}: 뷰 템플릿은 데이터를 문자로 출력한다. 따라서 컨버터를 적용하게 
+	    되면 Integer 타입인 10000을 String 타입으로 변환하는 컨버터인 
+		IntegerToStringConverter를 실행하게 된다. 이 부분으 컨버터를 
+		실행하지 않아도 타임리프가 숫자를 문자로 자동으로 변환하기 때문에 컨버터를 
+		적용할 때와 하지 않을 때가 같다. 
+	  - ${{ipPort}}: 뷰 템플릿은 데이터를 문자로 출력한다. 따라서 컨버터를 적용하게
+	    되면 IpPort 타입을 String 타입으로 변환해야 하므로 IpPortToStringConverter가 
+		적용된다. 그 결과 127.0.0.1:8080가 출력된다. 
+	
+  폼에 적용하기 
+    - 이번에는 컨버터를 폼에 적용해보자. 
+	
+	ConverterController - 코드 추가 
+	  - Form 객체를 데이터를 전달하는 폼 객체로 사용한다. 
+	    - GET /converter/edit: IpPort를 뷰 템플릿 폼에 출력한다. 
+		- POST /converter/edit: 뷰 템플릿 폼의 IpPort 정보를 받아서 출력한다. 
+	
+	resources/templates/converter-form.html
+	  - 타임리프의 th:field는 앞서 설명했듯이, id, name을 출력하는 등 다양한 
+	    기능이 있는데, 여기에 컨버전 서비스도 함께 적용된다. 
+	
+	  - 실행 
+	    - GET /converter/edit
+		  - th:field가 자동으로 컨버전 서비스를 적용해주어서 ${{ipPort}}처럼 
+		    적용 되었다. 따라서 IpPort -> String으로 변환된다. 
+		- POST /converter/edit
+		  - @ModelAttribute를 사용해서 String -> IpPort로 변환된다. 
 ```
