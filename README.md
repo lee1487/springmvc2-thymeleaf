@@ -3908,3 +3908,62 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 
   실제 코드를 통해서 타입 컨버터를 이해해보자. 
 ```
+
+### 타입 컨버터 - Converter 
+```
+  타입 컨버터를 어떻게 사용하는지 코드로 알아보자. 
+  타입 컨버터를 사용하려면 org.springframework.core.convert.converter.Converter
+  인터페이스를 구현하면 된다. 
+    
+  주의 
+    - Converter라는 이름의 인터페이스가 많으니 조심해야 한다. 
+	- org.springframework.core.convert.converter.Converter를 사용해야 한다. 
+  
+  먼저 가장 단순한 형태인 문자를 숫자로 바꾸는 타입 컨버터를 만들어보자. 
+  
+  StringToIntegerConverter - 문자를 숫자로 변환하는 타입 컨버터 
+    - String -> Integer로 변환하기 때문에 소스가 String이 된다. 
+	  이 문자를 Integer.valueOf(source)를 사용해서 숫자로 변경한 
+	  다음에 변경된 숫자를 반환하면 된다. 
+
+  IntegerToStringConverter - 숫자를 문자로 변환하는 타입 컨버터 
+    - 이번에는 숫자를 문자로 변환하는 타입 컨버터이다. 앞의 컨버터와 반대의 일을 한다. 
+	  이번에는 숫자가 입력되기 때문에 소스가 Integer가 된다. String.valueOf(source)를 
+	  사용해서 문자로 변경한 다음 변경된 문자를 반환하면 된다. 
+	
+  테스트 코드를 통해서 타입 컨버터가 어떻게 동작하는지 확인해보자.
+  ConverterTest - 타입 컨버터 테스트 코드 
+  
+  사용자 정의 타입 컨버터 
+    - 타입 컨버터 이해를 돕기 위해 조금 다른 컨버터를 준비해보았다. 
+	  127.0.0.1:8080과 같은 IP, PORT를 입력하면 IpPort 객체로 
+	  변환하는 컨버터를 만들어보자. 
+
+  IpPort
+    - 롬복의 @EqualsAndHashCode를 넣으면 모든 필드를 사용해서 equals(), hashcode()를 
+	  생성한다. 따라서 모든 필드의 값이 같다면 a.equals(b)의 결과가 참이 된다. 
+
+  StringToIpPortConverter - 컨버터 
+    - 127.0.0.1:8080 같은 문자를 입력하면 IpPort 객체를 만들어 반환한다.
+  IpPortToStringConverter
+    - IpPort 객체를 입력하면 127.0.0.1:8080 같은 문자를 반환한다.
+
+  ConverterTest - IpPort 컨버터 테스트 추가 
+    - 타입 컨버터 인터페이스가 단순해서 이해하기 어렵지 않을 것이다. 
+	  그런데 이렇게 타입 컨버터를 하나하나 직접 사용하면, 개발자가 직접 컨버팅 
+	  하는 것과 큰 차이가 없다. 타입 컨버터를 등록하고 관리하면서 편리하게 
+	  변환 기능을 제공하는 역할을 하는 무언가가 필요하다. 
+	
+  참고 
+    - 스프링은 용도에 따라 다양한 방식의 타입 컨버터를 제공한다.
+	- Converter -> 기본 타입 컨버터 
+	- ConverterFactory -> 전체 클래스 계층 구조가 필요할 때 
+	- GenericConverter -> 정교한 구현, 대상 필드의 애노테이션 정보 사용 가능 
+	- ConditionalGenericConverter -> 특정 조건이 참인 경우에만 실행 
+	- 자세한 내용은 공식 문서를 참고하자. 
+
+  참고 
+    - 스프링은 문자, 숫자, 불린, Enum등 일반적인 타입에 대한 대부분의 컨버터를 기본으로 
+	  제공한다. IDE에서 Converter, ConverterFactory, GenericConverter의 
+	  구현체를 찾아보면 수 많은 컨버터를 확인할 수 있다. 
+```
