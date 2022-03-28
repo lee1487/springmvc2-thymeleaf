@@ -3941,7 +3941,7 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
 
   IpPort
     - 롬복의 @EqualsAndHashCode를 넣으면 모든 필드를 사용해서 equals(), hashcode()를 
-	  생성한다. 따라서 모든 필드의 값이 같다면 a.equals(b)의 결과가 참이 된다. 
+	  생성한다. 따라서 모든 필드의 값이 같다면 a.equals(b)의 결과가 참이 된다.  
 
   StringToIpPortConverter - 컨버터 
     - 127.0.0.1:8080 같은 문자를 입력하면 IpPort 객체를 만들어 반환한다.
@@ -3966,4 +3966,45 @@ https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expre
     - 스프링은 문자, 숫자, 불린, Enum등 일반적인 타입에 대한 대부분의 컨버터를 기본으로 
 	  제공한다. IDE에서 Converter, ConverterFactory, GenericConverter의 
 	  구현체를 찾아보면 수 많은 컨버터를 확인할 수 있다. 
+```
+
+### 컨버전 서비스 - ConversionService
+```
+  이렇게 타입 컨버터를 하나하나 직접 찾아서 타입 변환에 사용하는 것은 매우 불편하다. 그래서 
+  스프링은 개별 컨버터를 모아두고 그것을 묶어서 편리하게 사용할 수 있는 기능을 제공하는데, 
+  이것이 바로 컨버전 서비스(ConversionService)이다. 
+  
+  ConversionService 인터페이스 
+    - 컨버전 서비스 인터페이스는 단순히 컨버팅이 가능한가? 확인하는 기능과, 컨버팅 기능을 제공한다. 
+
+  사용 예를 확인해보자. 
+  ConversionServiceTest - 컨버전 서비스 테스트 코드 
+    - DefaultConversionService는 ConversionService 인터페이스를 구현했는데, 
+	  추가로 컨버터를 등록하는 기능도 제공한다. 
+
+  등록과 사용 분리 
+    - 컨버터를 등록할 때는 StringToIntegerConverter 같은 타입 컨버터를 
+	  명확하게 알아야 한다. 반면에 컨버터를 사용하는 입장에서는 타입 컨버터를 전혀 몰라도 된다. 
+	  타입 컨버터들은 모두 컨버전 서비스 내부에 숨어서 제공된다. 따라서 타입 변환을 원하는 
+	  사용자는 컨버전 서비스 인터페이스에만 의존하면 된다. 물론 컨버전 서비스를 등록하는 
+	  부분과 사용하는 부분을 분리하고 의존관계 주입을 사용해야 한다. 
+
+  컨버전 서비스 사용 
+    - Integer value = conversionService.convert("10", Integer.class)
+  
+  인터페이스 분리 원칙 - ISP(Interface Segregation Principal)
+    - 인터페이스 분리 원칙은 클라이언트가 자신이 이용하지 않는 메서드에 의존하지 않아야 한다. 
+
+  DefaultConversionService는 다음 두 인터페이스를 구현했다. 
+    - ConversionService: 컨버터 사용에 초점 
+	- ConverterRegistry: 컨버터 등록에 초점 
+
+  이렇게 인터페이스를 분리하면 컨버터를 사용하는 클라이언트와 컨버터를 등록하고 관리하는 클라이언트의 
+  관심사를 명확하게 분리할 수 있다. 특히 컨버터를 사용하는 클라이언트는 ConversionService만 
+  의존하면 되므로, 컨버터를 어떻게 등록하고 관리하는지는 전혀 몰라도 된다. 결과적으로 컨버터를 
+  사용하는 클라이언트는 꼭 필요한 메서드만 알게된다. 이렇게 인터페이스를 분리하는 것을 ISP라 한다. 
+  
+  스프링은 내부에서 ConversionService를 사용해서 타입을 변환한다. 예를 들어서 앞서 살펴본 
+  @RequestParam 같은 곳에서 이 기능을 사용해서 타입을 변환한다. 
+  이제 컨버전 서비스를 스프링에 적용해보자.
 ```
