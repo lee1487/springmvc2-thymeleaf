@@ -4416,3 +4416,77 @@ https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#fo
     - file.getOriginalFilename(): 업로드 파일 명 
 	- file.transferTo(...): 파일 저장 
 ```
+
+### 예제로 구현하는 파일 업로드, 다운로드 
+```
+  실제 파일이나 이미지 업로드, 다운로드 할 때는 몇가지 고려할 점이 있는데, 구체적인 예제로 
+  알아보자. 
+  
+  요구사항 
+    - 상품을 관리 
+	  - 상품 이름 
+	  - 첨부파일 하나 
+	  - 이미지 파일 여러개 
+	- 첨부파일을 업로드 다운로드 할 수 있다.
+	- 업로드한 이미지를 웹 브라우저에서 확인할 수 있다. 
+
+  Item - 상품 도메인 
+  ItemRepository - 상품 리포지토리 
+  UploadFile - 업로드 파일 정보 보관
+    - uploadFileName: 고객이 업로드한 파일명 
+	- storeFileName: 서버 내부에서 관리하는 파일명 
+  
+  고객이 업로드한 파일명으로 서버 내부에서 파일을 저장하면 안된다. 왜냐하면 서로 다른 
+  고객이 같은 파일이름을 업로드 하는 경우 기존 파일 이름과 충돌이 날 수 있다. 서버에서는 
+  저장할 파일명이 겹치지 않도록 내부에서 관리하는 별도의 파일명이 필요하다. 
+  
+  FileStore - 파일 저장과 관련된 업무 처리 
+    - 멀티파트 파일을 서버에 저장하는 역할을 담당한다. 
+	  - createStoreFileName()
+	    - 서버 내부에서 관리하는 파일명은 유일한 이름을 생성하는 UUID를 사용해서 
+		  충돌하지 않도록 한다. 
+	  - extractExt() 
+	    - 확장자를 별도로 추출해서 서버 내부에서 관리하는 파일명에도 붙여준다. 예를 
+		  들어서 고객이 a.png라는 이름으로 업로드 하면 51041c62-86e4-
+		  4274-801d-614a7d994edb.png와 같이 저장한다. 
+
+  ItemForm 
+    - 상품 저장용 폼이다. 
+	- List<MultipartFile> imageFiles
+	  - 이미지를 다중 업로드 하기 위해 MultipartFile를 사용했다. 
+	- MultipartFile attachFile
+	  - 멀티파트는 @ModelAttribute에서 사용할 수 있다. 
+
+  ItemController 
+    - @GetMapping("/items/new")
+	  - 등록 폼을 보여준다. 
+	- @PostMapping("/items/new")
+	  - 폼의 데이터를 저장하고 보여주는 화면으로 리다이렉트 한다. 
+	- @GetMapping("/items/{id}")
+	  - 상품을 보여준다. 
+	- @GetMapping("/images/{filename}")
+	  - <img> 태그로 이미지를 조회할 때 사용한다. UrlResource로 
+	    이미지 파일을 읽어서 @ResponseBody로 이미지 바이너리를 반환한다.
+	- @GetMapping("/attach/{itemId}")
+	  - 파일을 다운로드 할 때 실행한다. 예제를 더 단순화 할 수 있지만, 
+	    파일 다운로드 시 권한 체크같은 복잡한 상황까지 가정한다 생각하고 
+		이미지 id를 요청하도록 했다. 파일 다운로드시에는 고객이 업로드한 
+		파일 이름으로 다운로드 하는게 좋다. 이때는 Content-Disposition
+		헤더에 attachment; filename="업로드 파일명" 값을 주면 된다. 
+
+  등록 폼 뷰 
+  resources/templates/item-form.html
+    - 다중 파일 업로드를 하려면 multiple="multiple"옵션을 주면 된다. 
+	  ItemForm의 다음 코드에서 여러 이미지 파일을 받을 수 있다. 
+	  private List<MultipartFile> imageFiles;
+
+  조회 뷰 
+  resources/templates/item-view.html 
+    - 첨부 파일은 링크로 걸어두고, 이미지는 <img> 태그를 반복해서 출력한다. 
+
+  실행 
+    - http://localhost:8080/items/new
+	- 실행해보면 하나의 첨부파일을 다운로드 업로드 하고, 여러 이미지 파일을 한번에 
+	  업로드 할 수 있다. 
+	  
+```
