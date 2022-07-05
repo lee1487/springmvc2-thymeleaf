@@ -4488,5 +4488,6 @@ https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#fo
     - http://localhost:8080/items/new
 	- 실행해보면 하나의 첨부파일을 다운로드 업로드 하고, 여러 이미지 파일을 한번에 
 	  업로드 할 수 있다. 
+의미없는 커밋
 	  
 ```
